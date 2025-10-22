@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>jonescare hospital</title>
+
+  <!-- Fonts & icons (unchanged as requested) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- ScrollReveal -->
+  <script src="https://unpkg.com/scrollreveal"></script>
+
+  <style>
+    /* ========== Base (kept styling intact) ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    :root{
+      --primary: #00008b;
+      --primary-dark: #00006a;
+      --primary-light: #2a2aa3;
+      --secondary: #8bc34a;
+      --secondary-dark: #76ad3d;
+      --accent: #ff6b6b;
+      --light: #f7f9fb;
+      --dark: #222;
+      --gray: #6b7280;
+      --white: #ffffff;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --shadow-lg: 0 20px 50px rgba(0,0,0,0.15);
+      --transition: all 0.3s ease;
+      --radius: 12px;
+    }
+
+    body {
+      background-color: var(--white);
+      color: var(--dark);
+      line-height: 1.6;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    /* ========== Navbar ========== */
+    #navbar {
+      background-color: var(--primary-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 50px;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      transition: var(--transition);
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    #navbar.scrolled {
+      background-color: var(--primary-dark);
+      padding: 10px 50px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+
+    #navbar .brand {
+      display:flex;
+      align-items:center;
+      gap: 18px;
+    }
+
+    #navbar img {
+      width: 100px; height: 100px;
+      border-radius: 100%;
+      transition: var(--transition);
+      border: 2px solid var(--secondary);
+      background: var(--white); padding: 2px;
+    }
+    #navbar img:hover { transform: rotate(5deg) scale(1.05); box-shadow: 0 0 15px rgba(139,195,74,0.4); }
+
+    /* Increased spacing between nav items as requested */
+    #navbar nav { display:flex; align-items:center; gap: 48px; } /* increased gap */
+    #navbar ul { list-style:none; display:flex; gap: 40px; align-items:center; }
+    #navbar a {
+      text-decoration: none; color: var(--white); font-weight:500;
+      position: relative; transition: var(--transition); padding: 8px 0;
+    }
+    #navbar a::after { content:''; position:absolute; left:0; bottom:0; width:0%; height:2px; background:var(--secondary); transition:var(--transition); }
+    #navbar a:hover::after { width:100%; }
+    #navbar a:hover { color: var(--secondary); }
+
+    /* Hamburger - hidden on desktop */
+    .hamburger {
+      display:none;
+      width:48px; height:48px;
+      border-radius:10px; background:transparent; border:1px solid rgba(255,255,255,0.08);
+      align-items:center; justify-content:center; cursor:pointer;
+    }
+    .hamburger .bar { width:20px; height:2px; background:var(--white); display:block; position:relative; transition:var(--transition); }
+    .hamburger .bar::before, .hamburger .bar::after {
+      content:''; position:absolute; left:0; width:20px; height:2px; background:var(--white); transition:var(--transition);
+    }
+    .hamburger .bar::before { top:-6px; }
+    .hamburger .bar::after { top:6px; }
+
+    /* Mobile navigation (slides down) */
+    .mobile-nav {
+      display:none;
+      position: fixed;
+      top: 75px;
+      right: 20px;
+      background: linear-gradient(180deg, rgba(0,0,106,0.95), rgba(0,0,80,0.95));
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      z-index: 1200;
+      width: calc(100% - 40px);
+      max-width: 360px;
+    }
+    .mobile-nav ul { display:flex; flex-direction:column; gap:18px; }
+    .mobile-nav a { color: var(--white); font-size:16px; }
+
+    /* ========== Sections (kept) ========== */
+    section { padding: 100px 10%; opacity: 0; transform: translateY(40px); transition: all 0.8s ease-out; }
+    section.visible { opacity:1; transform: translateY(0); }
+
+    .section-header { text-align:center; margin-bottom:60px; }
+    .section-header h1 { font-size:2.5em; color:var(--primary); margin-bottom:15px; position:relative; display:inline-block; }
+    .section-header h1::after { content:''; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%); width:80px; height:4px; background:var(--secondary); border-radius:2px; }
+    .section-header p { color:var(--gray); max-width:600px; margin:0 auto; }
+
+    /* ========== Home ========== */
+    #home {
+      background: linear-gradient(rgba(0,0,106,0.6), rgba(145,244,99,0.6)), url('jones about pic.jpg') no-repeat center center/cover;
+      color: var(--white);
+      padding: 180px 10% 120px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+      min-height: 100vh; border-radius: 0 0 30px 2px; position:relative; overflow:hidden;
+    }
+    #home::before {
+      content:''; position:absolute; bottom:0; left:0; width:100%; height:100px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="%23ffffff"></path></svg>');
+      background-size:cover; background-repeat:no-repeat;
+    }
+    #home h1 { font-size:3.5em; margin-bottom:20px; font-weight:700; text-shadow:0 5px 15px rgba(0,0,0,0.2); animation: fadeInUp 1s ease-out; }
+    #home p { font-size:1.3em; margin-bottom:35px; max-width:700px; animation: fadeInUp 1s ease-out 0.2s both; }
+
+    .cta-buttons { display:flex; gap:20px; animation: fadeInUp 1s ease-out 0.4s both; }
+    .btn {
+      padding:14px 32px; border-radius:50px; font-weight:600; cursor:pointer; transition:var(--transition);
+      border:none; font-size:1em; display:inline-flex; align-items:center; gap:10px;
+    }
+
+    .btn-primary {
+      background: var(--secondary); color: var(--primary); box-shadow: 0 5px 15px rgba(139,195,74,0.3);
+      position: relative;
+      /* pulsing glow for the Book Appointment button */
+    }
+    /* pulsing glow - subtle and not changing original color palette */
+    .btn-primary.pulse {
+      animation: bookPulse 2.2s infinite ease-in-out;
+    }
+    @keyframes bookPulse {
+      0% { box-shadow: 0 6px 20px rgba(139,195,74,0.18); transform: translateY(0); }
+      50% { box-shadow: 0 16px 40px rgba(139,195,74,0.26); transform: translateY(-3px); }
+      100% { box-shadow: 0 6px 20px rgba(139,195,74,0.18); transform: translateY(0); }
+    }
+
+    .btn-primary:hover { background: var(--secondary-dark); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(139,195,74,0.4); }
+    .btn-secondary { background: transparent; color: var(--white); border: 2px solid var(--white); }
+    .btn-secondary:hover { background: var(--white); color: var(--primary); transform: translateY(-3px); }
+
+    @keyframes fadeInUp { 0%{ opacity:0; transform: translateY(40px);} 100%{ opacity:1; transform: translateY(0);} }
+
+    /* ========== About ========== */
+    #about { background: var(--white); position:relative; }
+    .about-content { display:flex; align-items:center; gap:60px; }
+    .about-text { flex:1; text-align:left; }
+    .about-text p { margin-bottom:20px; font-size:1.1em; color:var(--dark); }
+    .about-image { flex:1; border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow-lg); position:relative; border:3px solid var(--primary); }
+    .about-image img { width:100%; height:auto; display:block; transition:var(--transition); }
+    .about-image:hover img { transform: scale(1.05); }
+
+    /* ========== Services ========== */
+    #services { background: linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%); }
+    .services-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap:30px; }
+    .service-card { background: var(--white); border-radius: var(--radius); padding:30px; box-shadow: var(--shadow); transition:var(--transition); text-align:left; position:relative; overflow:hidden; z-index:1; border-top:4px solid var(--primary); }
+    .service-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); }
+    .service-icon { font-size:2.5em; color:var(--primary); margin-bottom:20px; }
+    .service-card h3 { font-size:1.4em; margin-bottom:15px; color:var(--primary); }
+    .service-card p { color:var(--gray); }
+
+    /* ========== Contact ========== */
+    #contact { background: var(--white); }
+    .contact-container { display:flex; gap:50px; }
+    .contact-info { flex:1; text-align:left; }
+    .contact-item { display:flex; align-items:flex-start; gap:15px; margin-bottom:25px; }
+    .contact-icon { background: var(--primary); color: var(--white); width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2em; flex-shrink:0; }
+    .contact-details h3 { margin-bottom:5px; color:var(--primary); }
+    .contact-details p { color:var(--gray); }
+    .map-container { flex:1; border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow); height:400px; background:#e9ecef; display:flex; align-items:center; justify-content:center; border:2px solid var(--primary-light); }
+
+    /* ========== Footer ========== */
+    footer { background: var(--primary-dark); color: var(--white); padding: 60px 10% 30px; text-align: center; }
+    .footer-content { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:40px; flex-wrap:wrap; gap:40px; }
+    .footer-logo { flex:1; min-width:250px; text-align:left; }
+    .footer-logo img { width:80px; height:80px; border-radius:50%; margin-bottom:15px; border:2px solid var(--secondary); background:var(--white); padding:3px; }
+    .footer-links { flex:1; min-width:200px; text-align:left; }
+    .footer-links h3 { margin-bottom:20px; position:relative; display:inline-block; }
+    .footer-links h3::after { content:''; position:absolute; bottom:-8px; left:0; width:40px; height:3px; background:var(--secondary); }
+    .footer-links ul { list-style:none; }
+    .footer-links li { margin-bottom:10px; }
+    .footer-links a { color:#d1d5db; text-decoration:none; transition:var(--transition); }
+    .footer-links a:hover { color:var(--secondary); padding-left:5px; }
+    .copyright { padding-top:20px; border-top:1px solid rgba(255,255,255,0.1); color:#d1d5db; }
+
+    /* Footer social icons */
+    .social-icons { display:flex; gap:12px; margin-top:12px; }
+    .social-icons a { width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:8px; background: rgba(255,255,255,0.06); color:var(--white); text-decoration:none; transition:var(--transition); }
+    .social-icons a:hover { transform: translateY(-4px); background: rgba(255,255,255,0.12); }
+
+    /* ========== Chat widget (kept) ========== */
+    #chatIcon { position: fixed; bottom: 25px; right: 25px; width: 70px; height: 70px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow: var(--shadow-lg); z-index:1100; transition:var(--transition); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%{ box-shadow:0 0 0 0 rgba(0,0,139,0.7); } 70%{ box-shadow:0 0 0 15px rgba(0,0,139,0); } 100%{ box-shadow:0 0 0 0 rgba(0,0,139,0); } }
+    #chatIcon:hover { transform: scale(1.1); animation:none; }
+    #chatIcon svg{ width:30px; height:30px; fill:var(--white); }
+    #chatContainer { position:fixed; bottom:110px; right:25px; width:380px; max-width:calc(100% - 40px); height:550px; background:var(--white); border-radius:20px; box-shadow:var(--shadow-lg); display:none; flex-direction:column; z-index:1100; overflow:hidden; border:1px solid rgba(0,0,0,0.06); transform: translateY(20px); opacity:0; transition:all 0.3s ease; }
+    #chatContainer.active { display:flex; transform:translateY(0); opacity:1; }
+
+    /* Messages & input (kept) */
+    #chatHeader { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color:var(--white); padding:15px 20px; display:flex; justify-content:space-between; align-items:center; }
+    #messages { flex:1; padding:20px; overflow-y:auto; background: linear-gradient(180deg,#fafafa 0%,#f5f7f9 100%); display:flex; flex-direction:column; gap:15px; }
+    .message{ max-width:80%; padding:12px 18px; border-radius:18px; word-wrap:break-word; line-height:1.5; font-size:14px; position:relative; animation: messageAppear 0.3s ease; }
+    @keyframes messageAppear{ from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+    .user-message{ align-self:flex-end; background: linear-gradient(135deg,var(--secondary) 0%,var(--secondary-dark) 100%); color:var(--primary); border-bottom-right-radius:6px; }
+    .bot-message{ align-self:flex-start; background:var(--white); color:var(--dark); border:1px solid #e6e9ee; border-bottom-left-radius:6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .welcome-message{ text-align:center; color:var(--gray); font-style:italic; padding:10px; background:rgba(255,255,255,0.7); border-radius:10px; margin-bottom:10px; }
+    #inputArea{ padding:15px; background:var(--white); border-top:1px solid #eef2f7; display:flex; gap:10px; align-items:center; }
+    #msg{ flex:1; padding:12px 18px; border:1px solid #e1e7ef; border-radius:50px; outline:none; font-size:14px; transition:var(--transition); }
+    #msg:focus{ box-shadow:0 0 0 3px rgba(139,195,74,0.15); border-color:var(--secondary); }
+    #sendBtn{ background: linear-gradient(135deg,var(--secondary) 0%,var(--secondary-dark) 100%); color:var(--primary); border:none; border-radius:50px; padding:12px 20px; cursor:pointer; font-weight:600; min-width:80px; transition:var(--transition); display:flex; align-items:center; justify-content:center; gap:5px; }
+    #sendBtn:hover{ transform: translateY(-2px); box-shadow:0 5px 15px rgba(139,195,74,0.3); }
+    .typing-indicator{ display:inline-block; background:var(--white); padding:12px 18px; border-radius:18px; border-bottom-left-radius:6px; }
+    .typing-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--gray); margin:0 3px; animation: typing 1.4s infinite ease-in-out; }
+    .typing-dot:nth-child(1){ animation-delay:-0.32s; } .typing-dot:nth-child(2){ animation-delay:-0.16s; }
+    @keyframes typing { 0%,80%,100%{ transform:scale(0.8); opacity:0.5 } 40%{ transform:scale(1); opacity:1 } }
+    .quick-replies{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .quick-replies button{ padding:8px 14px; border-radius:50px; border:1px solid var(--primary); background:var(--white); color:var(--primary); font-size:12px; cursor:pointer; transition:var(--transition); }
+    .quick-replies button:hover{ background:var(--primary); color:var(--white); }
+
+    /* Modal (updated to embed google form iframe) */
+    .modal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.4); }
+    .modal-content {
+      background-color:var(--secondary); margin: 6% auto; padding: 18px; border-radius:16px;
+      width: 94%; max-width: 760px; box-shadow:0 8px 20px rgba(0,0,0,0.2); text-align: center; position:relative;
+    }
+    .modal .close { color: var(--primary-dark); font-size: 28px; font-weight: 700; position:absolute; top:12px; right:16px; cursor:pointer; }
+    .modal .close:hover { color: var(--secondary); }
+    .embed-frame { width:100%; height:640px; border: none; border-radius:12px; overflow:hidden; }
+
+    /* Thank you message kept but hidden when embedding form */
+    #thankyou-message { display:none; text-align:center; padding:20px; color:#00008b; font-weight:500; }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 992px) {
+      .about-content, .contact-container { flex-direction: column; }
+      .about-image { order:-1; }
+      #navbar { padding:12px 24px; }
+      #navbar img { width:80px; height:80px; }
+      #navbar nav { gap: 18px; }
+    }
+    @media (max-width: 768px) {
+      #navbar { flex-direction:row; padding:12px 16px; gap:12px; align-items:center; }
+      #navbar nav { display:none; } /* hide desktop nav */
+      .hamburger { display:flex; } /* show hamburger */
+      section { padding:80px 5%; }
+      #home h1 { font-size:2.2em; }
+      .cta-buttons { flex-direction:column; align-items:center; }
+      .btn { width:100%; max-width:320px; justify-content:center; }
+      /* mobile nav container will be displayed when toggled */
+    }
+    @media (max-width: 480px) {
+      #chatContainer { right:10px; left:10px; width:auto; height:70vh; bottom:90px; }
+      #chatIcon { right:15px; bottom:20px; width:60px; height:60px; }
+      .modal-content { padding:16px; margin-top:10%; }
+      .embed-frame { height:560px; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="brand">
+      <img src="JONES CARE LOGO.png" alt="JonesCare logo">
+      <!-- keep brand text or empty as before -->
+    </div>
+
+    <!-- Desktop nav -->
+    <nav aria-hidden="false">
+      <ul>
+        <li><a href="#home">HOME</a></li>
+        <li><a href="#about">ABOUT</a></li>
+        <li><a href="#services">SERVICES</a></li>
+        <li><a href="#contact">CONTACT</a></li>
+      </ul>
+    </nav>
+
+    <!-- Hamburger -->
+    <button class="hamburger" id="hamburgerBtn" aria-label="Open menu" aria-expanded="false">
+      <span class="bar" aria-hidden="true"></span>
+    </button>
+  </nav>
+
+  <!-- Mobile nav panel -->
+  <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+    <ul>
+      <li><a href="#home" class="mobile-link">HOME</a></li>
+      <li><a href="#about" class="mobile-link">ABOUT</a></li>
+      <li><a href="#services" class="mobile-link">SERVICES</a></li>
+      <li><a href="#contact" class="mobile-link">CONTACT</a></li>
+    </ul>
+  </div>
+
+  <!-- Home Section -->
+  <section id="home">
+    <h1>JONESCARE HOSPITAL</h1>
+    <p>Your Health Is Our Priority</p>
+    <div class="cta-buttons">
+      <button id="appointment-btn" class="btn btn-primary pulse" aria-haspopup="dialog" aria-controls="appointment-modal"><i class="fas fa-calendar-check"></i> BOOK APPOINTMENT</button>
+      <button class="btn btn-secondary" id="emergencyBtn"><i class="fas fa-phone-alt"></i> EMERGENCY CONTACT</button>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about">
+    <div class="section-header">
+      <h1>ABOUT US</h1>
+      <p>Learn more about our commitment to your health and wellbeing</p>
+    </div>
+    <div class="about-content">
+      <div class="about-text">
+        <p>JONESCARE LTD is a fully registered Level 2 outpatient health facility located in Webuye Town, Bungoma County. We are dedicated to providing affordable, timely, and high-quality healthcare services to individuals and families in the community.</p>
+        <p>Our team of experienced healthcare professionals is driven by compassion and professionalism, ensuring each patient receives personalized care tailored to their specific needs.</p>
+        <p>With state-of-the-art facilities and a patient-centered approach, we strive to be your trusted healthcare partner for all your medical needs.</p>
+        <button class="btn btn-primary" style="margin-top:20px;"><i class="fas fa-user-md"></i> MEET OUR TEAM</button>
+      </div>
+      <div class="about-image">
+        <img src="jonescare facility.jpg" alt="JonesCare Hospital Facility">
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="section-header">
+      <h1>OUR SERVICES</h1>
+      <p>Comprehensive healthcare services for you and your family</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-stethoscope"></i></div>
+        <h3>General Consultations</h3>
+        <p>Professional medical consultations for all your healthcare needs with experienced doctors.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-heartbeat"></i></div>
+        <h3>Maternal & Child Health</h3>
+        <p>Comprehensive care for mothers and children including prenatal and postnatal services.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-syringe"></i></div>
+        <h3>Immunizations</h3>
+        <p>Complete vaccination services for children and adults to protect against preventable diseases.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-user-friends"></i></div>
+        <h3>Family Planning</h3>
+        <p>Confidential reproductive health services and counseling for individuals and couples.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-procedures"></i></div>
+        <h3>Minor Surgical Procedures</h3>
+        <p>Safe and effective minor surgeries performed by our skilled medical team.</p>
+      </div>
+      <div class="service-card">
+        <div class="service-icon"><i class="fas fa-vial"></i></div>
+        <h3>Laboratory Services</h3>
+        <p>Accurate diagnostic testing with quick results to support proper diagnosis and treatment.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact">
+    <div class="section-header">
+      <h1>CONTACT US</h1>
+      <p>Get in touch with us for appointments or inquiries</p>
+    </div>
+    <div class="contact-container">
+      <div class="contact-info">
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="contact-details"><h3>Our Location</h3><p>Webuye Town, Bungoma County, Kenya</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+          <div class="contact-details"><h3>Phone Number</h3><p>+254 0116 439 878</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+          <div class="contact-details"><h3>Email Address</h3><p>jonescare@gmail.com</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fas fa-clock"></i></div>
+          <div class="contact-details"><h3>Working Hours</h3><p>Monday - Saturday: 08:00 AM - 10:00 PM</p></div>
+        </div>
+      </div>
+      <div class="map-container" style="text-align:center; margin-top:40px;">
+  <p>
+    <i class="fas fa-map-marked-alt" 
+       style="font-size:3em; color:#1dd1a1; margin-bottom:15px;">
+    </i>
+  </p>
+  <p>Interactive Map Location</p>
+
+  <div style="margin-top:25px; width:100%; max-width:800px; margin:auto; border-radius:30px; overflow:hidden; box-shadow:0 0 10px rgba(0,0,0,0.15);">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2862.3220637491595!2d34.761579773102206!3d0.614777063501462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1781cfcaa79a1ce3%3A0x27a5f6f1f0663e73!2sJONESCARE%20LTD%20MEDICAL%20CENTER!5e1!3m2!1sen!2ske!4v1761150629355!5m2!1sen!2ske"
+      width="100%"
+      height="450"
+      style="border:0;"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
+  </div>
+</div>
+
+
+    
+  </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="JONES CARE LOGO.png" alt="JonesCare Hospital Logo">
+        <p>Your trusted healthcare partner in Webuye Town, providing quality medical services with compassion and excellence.</p>
+
+        <!-- Social icons -->
+        <div class="social-icons" aria-label="Social links">
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://wa.me/2540116439878" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-links">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h3>Our Services</h3>
+        <ul>
+          <li><a href="#">General Consultations</a></li>
+          <li><a href="#">Maternal Care</a></li>
+          <li><a href="#">Immunizations</a></li>
+          <li><a href="#">Laboratory Services</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="copyright"> 
+      <p>&copy; 2025 JonesCare Hospital. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Chat Widget (kept unchanged) -->
+  <div id="chatIcon" title="Click to chat" role="button" aria-label="Open chat">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+    </svg>
+  </div>
+
+  <div id="chatContainer" aria-live="polite" aria-label="Chat widget">
+    <div id="chatHeader">
+      <h3>Service Chat</h3>
+      <button id="closeChat" title="Close chat" aria-label="Close chat">×</button>
+    </div>
+
+    <div id="messages" role="log">
+      <div class="welcome-message">Hello! How can we help you today? I can assist with hours, bookings, pricing, and more!</div>
+    </div>
+
+    <div id="inputArea">
+      <input type="text" id="msg" placeholder="Type your message..." aria-label="Type your message">
+      <button id="sendBtn"><i class="fas fa-paper-plane"></i> Send</button>
+    </div>
+  </div>
+
+  <!-- ---------- MODAL (embedded Google Form) ---------- -->
+  <div id="appointment-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="appointmentTitle" aria-hidden="true">
+    <div class="modal-content">
+      <button class="close" id="modalClose" aria-label="Close modal">&times;</button>
+      <h3 id="appointmentTitle" style="color:var(--primary); margin-bottom:14px;">Book Appointment</h3>
+
+      <!-- Embedded Google Form: using your original form link with embedded=true -->
+      <iframe
+        class="embed-frame"
+        src="https://docs.google.com/forms/d/e/1FAIpQLScq_kEEC3qllTWMM8UC04ZgsrOcVo5T1BhYSXbh7_lgBWdqcw/viewform?embedded=true"
+        title="Appointment Form (Google Form)"
+        frameborder="0"
+        marginheight="0"
+        marginwidth="0">
+        Loading…
+      </iframe>
+
+      <div id="thankyou-message">
+        <h3>🎉 Thank You!</h3>
+        <p>Your appointment has been submitted successfully.<br>We’ll get in touch soon.</p>
+        <button onclick="closeModal()" style="margin-top:15px;background:#00008b;color:#fff;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ===== Navbar scroll effect (kept) =====
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 50);
+      document.querySelectorAll('section').forEach(section => {
+        const position = section.getBoundingClientRect().top;
+        if (position < window.innerHeight - 100) section.classList.add('visible');
+      });
+    });
+
+    // ===== Hamburger & mobile nav =====
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const mobileNav = document.getElementById('mobileNav');
+
+    function openMobileNav(){
+      mobileNav.style.display = 'block';
+      mobileNav.setAttribute('aria-hidden', 'false');
+      hamburgerBtn.setAttribute('aria-expanded', 'true');
+      // focus trap start
+      document.body.style.overflow = 'hidden';
+    }
+    function closeMobileNav(){
+      mobileNav.style.display = 'none';
+      mobileNav.setAttribute('aria-hidden', 'true');
+      hamburgerBtn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', () => {
+      if (mobileNav.style.display === 'block') closeMobileNav(); else openMobileNav();
+    });
+
+    // close mobile nav when clicking a link
+    document.querySelectorAll('.mobile-link').forEach(a => {
+      a.addEventListener('click', () => {
+        closeMobileNav();
+      });
+    });
+
+    // close mobile nav if clicking outside
+    document.addEventListener('click', (e) => {
+      if (mobileNav.style.display === 'block' &&
+          !mobileNav.contains(e.target) &&
+          !hamburgerBtn.contains(e.target)) {
+        closeMobileNav();
+      }
+    });
+
+    // Allow ESC to close mobile nav
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (mobileNav.style.display === 'block') closeMobileNav();
+      }
+    });
+
+    // ===== Button click handlers (kept behavior) =====
+    document.getElementById('emergencyBtn').addEventListener('click', () => {
+      // kept original alert but more realistic phone link could be added
+      alert("Calling emergency line: +254 700 000000");
+    });
+
+    // ===== Chat widget functionality (kept) =====
+    (function(){
+      const chatIcon = document.getElementById('chatIcon');
+      const chatContainer = document.getElementById('chatContainer');
+      const closeChat = document.getElementById('closeChat');
+      const messagesDiv = document.getElementById('messages');
+      const msgInput = document.getElementById('msg');
+      const sendBtn = document.getElementById('sendBtn');
+
+      const chatbotResponses = {
+        greetings: [
+          "Hello! 👋 How can we help you today?",
+          "Hi there! What can I assist you with?",
+          "Welcome! How can I help you today?"
+        ],
+        hours: "Our working hours are:<br>• Monday-Saturday: 08:00 AM - 10:00 PM<br>• Sunday: Closed",
+        booking: "To make a booking, please tell us:<br>• Preferred date & time<br>• Service required<br>• Phone number",
+        pricing: "Services start at:<br>• registration is ksh.300<br>Contact for custom quotes.",
+        contact: "Reach us at:<br>• Phone: +254 116 439 878<br>• Email: jonescare@gmail.com<br>• Address: Webuye Town, Bungoma County",
+        default: "Sorry, I didn't get that. Try asking about hours, booking, pricing, or type 'agent' to request a human."
+      };
+
+      const patterns = {
+        greeting: ['hello','hi','hey','good morning','good afternoon','hola'],
+        hours: ['hours','open','opening','working hours','time'],
+        book: ['book','appointment','reserve','schedule','booking'],
+        price: ['price','cost','fee','how much','pricing'],
+        contact: ['contact','phone','email','address','location','where']
+      };
+
+      function showChat() {
+        chatContainer.classList.add('active');
+        chatIcon.style.display = 'none';
+        msgInput.focus();
+        setTimeout(() => messagesDiv.scrollTop = messagesDiv.scrollHeight, 50);
+      }
+
+      function hideChat() {
+        chatContainer.classList.remove('active');
+        chatIcon.style.display = 'flex';
+      }
+
+      chatIcon.addEventListener('click', showChat);
+      closeChat.addEventListener('click', hideChat);
+
+      function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = 'message ' + (sender === 'user' ? 'user-message' : 'bot-message');
+        div.innerHTML = text;
+        messagesDiv.appendChild(div);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function showTyping() {
+        const typing = document.createElement('div');
+        typing.className = 'message bot-message typing-indicator';
+        typing.id = 'typingIndicator';
+        typing.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+        messagesDiv.appendChild(typing);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function removeTyping() {
+        const t = document.getElementById('typingIndicator');
+        if (t) t.remove();
+      }
+
+      function generateResponse(input) {
+        if (input.includes('agent') || input.includes('human') || input.includes('representative')) {
+          return "A human agent will contact you. Please call +254 116 439 878 or leave your phone number and we'll reach out.";
+        }
+        if (input.includes('thank')) return "You're welcome! 😊 Anything else I can help with?";
+        if (input.includes('bye') || input.includes('goodbye')) return "Thanks for chatting — have a great day! 👋";
+
+        for (const [cat, words] of Object.entries(patterns)) {
+          for (const w of words) {
+            if (input.indexOf(w) !== -1) {
+              if (cat === 'greeting') {
+                return chatbotResponses.greetings[Math.floor(Math.random()*chatbotResponses.greetings.length)];
+              }
+              if (cat === 'book') return chatbotResponses.booking;
+              return chatbotResponses[cat] || chatbotResponses.default;
+            }
+          }
+        }
+        return chatbotResponses.default;
+      }
+
+      function sendMessage() {
+        const q = msgInput.value.trim();
+        if (!q) return;
+        addMessage(q, 'user');
+        msgInput.value = '';
+        showTyping();
+
+        setTimeout(() => {
+          removeTyping();
+          const resp = generateResponse(q.toLowerCase());
+          addMessage(resp, 'bot');
+        }, 800 + Math.random()*900);
+      }
+
+      sendBtn.addEventListener('click', sendMessage);
+      msgInput.addEventListener('keydown', function(e){ if (e.key === 'Enter') sendMessage(); });
+
+      function addQuickReplies() {
+        const quickReplies = ['What are your hours?', 'I want to book', 'What are your prices?', 'Contact information'];
+        const container = document.createElement('div');
+        container.className = 'quick-replies';
+        quickReplies.forEach(text => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.textContent = text;
+          btn.addEventListener('click', () => { msgInput.value = text; sendMessage(); });
+          container.appendChild(btn);
+        });
+        messagesDiv.appendChild(container);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+      setTimeout(addQuickReplies, 500);
+
+      // Close when clicking outside
+      document.addEventListener('click', function(e){
+        if (chatContainer.classList.contains('active') &&
+            !chatContainer.contains(e.target) &&
+            !chatIcon.contains(e.target)) {
+          hideChat();
+        }
+      });
+
+      // Keyboard accessibility
+      document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'c' && !chatContainer.classList.contains('active')) showChat();
+        if (e.key === 'Escape' && chatContainer.classList.contains('active')) hideChat();
+      });
+
+      // Error handling
+      window.addEventListener('error', function(e){
+        console.warn('Chat widget caught error:', e.message);
+        return true;
+      });
+    })();
+
+    // ===== Modal logic (embedded form) =====
+    const modal = document.getElementById('appointment-modal');
+    const openBtn = document.getElementById('appointment-btn');
+    const closeBtn = document.getElementById('modalClose');
+
+    function openModal(){
+      modal.style.display = 'block';
+      modal.setAttribute('aria-hidden', 'false');
+      // prevent background scroll
+      document.body.style.overflow = 'hidden';
+      // focus trap: set focus to iframe (so screen readers know)
+      const iframe = modal.querySelector('iframe');
+      iframe && iframe.focus && iframe.focus();
+    }
+
+    function closeModal(){
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      // If you want to reset iframe to top, you could reload it:
+      // const iframe = modal.querySelector('iframe'); iframe.src = iframe.src;
+    }
+
+    openBtn.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    // Close modal by clicking outside content
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.style.display === 'block') closeModal();
+    });
+
+    // Expose closeModal for thankyou close button
+    window.closeModal = closeModal;
+
+    // ===== ScrollReveal initialization =====
+    // small, consistent reveals that match your style (fade & slide)
+    if (typeof ScrollReveal !== 'undefined') {
+      const sr = ScrollReveal({ distance: '40px', duration: 700, easing: 'ease-out', reset: false, mobile: true });
+      sr.reveal('#home h1, #home p, .cta-buttons', { origin: 'bottom', interval: 120 });
+      sr.reveal('.section-header h1', { origin: 'top' });
+      sr.reveal('.about-text, .about-image', { origin: 'left', interval: 120, viewFactor: 0.2 });
+      sr.reveal('.service-card', { origin: 'bottom', interval: 100 });
+      sr.reveal('.contact-item, .map-container', { origin: 'right', interval: 120 });
+      sr.reveal('footer .footer-content > div', { origin: 'bottom', interval: 120 });
+    }
+
+    // Ensure sections visible on load if already in viewport
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('section').forEach(section => {
+        const pos = section.getBoundingClientRect().top;
+        if (pos < window.innerHeight - 100) section.classList.add('visible');
+      });
+    });
+
+  </script>
+</body>
+</html>
